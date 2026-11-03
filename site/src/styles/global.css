@@ -141,6 +141,9 @@ hr {
 /* Header: gradient from violet to the page background, with a glowing bottom edge.
    !important because the header component hardcodes its own background and shadow */
 header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     background: linear-gradient(
         to bottom,
         color-mix(in srgb, var(--violet-accent) 30%, var(--violet-background)),
@@ -148,6 +151,21 @@ header {
     ) !important;
     border-bottom: 1px solid color-mix(in srgb, var(--white) 50%, transparent);
     box-shadow: 0 6px 24px color-mix(in srgb, var(--violet-accent) 100%, transparent) !important;
+}
+
+header {
+    transition: transform 0.5s ease;
+}
+header.header-hidden {
+    transform: translateY(calc(-100% - 40px)); /* the extra 40px hides the glow too */
+}
+header:focus-within {
+    transform: none; /* if someone tabs into the menu, show it */
+}
+@media (prefers-reduced-motion: reduce) {
+    header {
+        transition: none;
+    }
 }
 
 /* Footer: same gradient as the header, mirrored so the intense violet

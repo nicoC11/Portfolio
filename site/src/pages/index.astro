@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import heroImage from '../assets/hero.png';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -17,11 +18,119 @@ const posts = (await getCollection('blog')).sort(
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
+			:global(html) {
+				scroll-behavior: smooth;
+			}
+
+			/* ---------- Hero ---------- */
+			.hero {
+				position: relative;
+				height: 85svh;
+				min-height: 480px;
+				display: grid;
+				place-items: center;
+				text-align: center;
+				overflow: hidden;
+			}
+			.hero :global(.hero-img) {
+				position: absolute;
+				inset: 0;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				border-radius: 0;
+			}
+			.hero-overlay {
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(
+					to bottom,
+					color-mix(in srgb, var(--violet-background) 55%, transparent),
+					var(--violet-background)
+				);
+			}
+			.hero-content {
+				position: relative;
+				max-width: 720px;
+				padding: 0 1.5rem;
+				text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+				animation: fade-up 1s ease both;
+			}
+			
+			/* Violet glow on the title */
+			.hero-content h1 {
+				text-shadow:
+					0 0 6px color-mix(in srgb, var(--violet) 45%, transparent),
+					0 0 20px color-mix(in srgb, var(--violet-accent) 55%, transparent);
+			}
+
+			/* Blinking cursor after the title */
+			.hero-content h1::after {
+				content: '';
+				display: inline-block;
+				width: 0.08em;
+				height: 0.8em;
+				margin-left: 0.12em;
+				vertical-align: -0.01em;
+				background: var(--violet-light);
+				box-shadow: 0 0 6px color-mix(in srgb, var(--violet) 60%, transparent),
+							0 0 20px color-mix(in srgb, var(--violet-accent) 70%, transparent);
+				animation: blink 1s step-end infinite;
+			}
+			@keyframes blink {
+				50% {
+					opacity: 0;
+				}
+			}
+
+			.scroll-down {
+				position: absolute;
+				bottom: 2rem;
+				left: 50%;
+				transform: translateX(-50%);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 0.6rem;
+				color: var(--violet-text);
+				text-decoration: none;
+				font-size: 0.85rem;
+				letter-spacing: 0.15em;
+				text-transform: uppercase;
+			}
+			.chevron {
+				width: 14px;
+				height: 14px;
+				border-right: 2px solid currentColor;
+				border-bottom: 2px solid currentColor;
+				transform: rotate(45deg);
+				animation: bounce 1.6s ease-in-out infinite;
+			}
+			@keyframes bounce {
+				0%,
+				100% {
+					transform: translateY(0) rotate(45deg);
+					opacity: 0.4;
+				}
+				50% {
+					transform: translateY(8px) rotate(45deg);
+					opacity: 1;
+				}
+			}
+			@keyframes fade-up {
+				from {
+					opacity: 0;
+					transform: translateY(16px);
+				}
+				to {
+					opacity: 1;
+					transform: none;
+				}
+			}
+
+			/* ---------- Posts ---------- */
 			main {
 				width: 960px;
-			}
-			.intro {
-				margin-bottom: 3rem;
 			}
 			ul {
 				display: flex;
@@ -58,21 +167,19 @@ const posts = (await getCollection('blog')).sort(
 			}
 			.title {
 				margin: 0;
-				color: rgb(var(--black));
+				color: var(--black);
 				line-height: 1;
 			}
 			.date {
 				margin: 0;
-				color: rgb(var(--gray));
+				color: var(--gray);
 			}
 			ul li a:hover h4,
 			ul li a:hover .date {
-				color: rgb(var(--accent));
+				color: var(--violet-light);
 			}
 			ul a:hover img {
-				box-shadow:
-					0 0 20px color-mix(in srgb, var(--violet) 90%, transparent),
-					0 0 60px color-mix(in srgb, var(--violet-accent) 70%, transparent);
+				box-shadow: var(--box-shadow);
 			}
 			@media (max-width: 720px) {
 				ul {
@@ -89,20 +196,51 @@ const posts = (await getCollection('blog')).sort(
 					font-size: 1.563em;
 				}
 			}
+
+			@media (prefers-reduced-motion: reduce) {
+				:global(html) {
+					scroll-behavior: auto;
+				}
+				.hero-content,
+				.chevron {
+					animation: none;
+				}
+				.hero-content h1::after {
+					animation: none;
+				}
+			}
 		</style>
 	</head>
 	<body>
 		<Header />
-		<main>
-			<section class="intro">
-				<h1>Hi, I'm Nico.</h1>
+
+		<section class="hero">
+			<Image
+				class="hero-img"
+				src={heroImage}
+				alt=""
+				widths={[800, 1400, 2000]}
+				sizes="100vw"
+				loading="eager"
+			/>
+			<div class="hero-overlay"></div>
+
+			<div class="hero-content">
+				<h1>Hi, I'm Nico</h1>
 				<p>
 					Computer engineer working across cloud, systems and robotics. This is where I document
 					the projects I build, starting with this very site on AWS.{' '}
 					<a href="/about">About me →</a>
 				</p>
-			</section>
+			</div>
 
+			<a href="#posts" class="scroll-down" aria-label="Scroll down to the posts">
+				<span>Scroll down</span>
+				<span class="chevron"></span>
+			</a>
+		</section>
+
+		<main id="posts">
 			<section>
 				<ul>
 					{posts.map((post) => (
@@ -121,6 +259,7 @@ const posts = (await getCollection('blog')).sort(
 				</ul>
 			</section>
 		</main>
+
 		<Footer />
 	</body>
 </html>
