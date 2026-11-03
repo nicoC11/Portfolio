@@ -140,32 +140,28 @@ hr {
 
 /* Header: gradient from violet to the page background, with a glowing bottom edge.
    !important because the header component hardcodes its own background and shadow */
+/* Header: frosted glass that blends with the page background.
+   !important where the header component hardcodes its own styles */
 header {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--violet-accent) 30%, var(--violet-background)),
-        var(--violet-accent)
-    ) !important;
-    border-bottom: 1px solid color-mix(in srgb, var(--white) 50%, transparent);
-    box-shadow: 0 6px 24px color-mix(in srgb, var(--violet-accent) 100%, transparent) !important;
+    background: color-mix(in srgb, var(--violet-background) 55%, transparent) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid color-mix(in srgb, var(--violet) 25%, transparent);
+    box-shadow: 0 4px 30px color-mix(in srgb, var(--violet) 50%, transparent) !important;
 }
 
-header {
-    transition: transform 0.5s ease;
+header a {
+    color: var(--violet-light) !important;
+    text-shadow: 0 0 8px color-mix(in srgb, var(--violet) 55%, transparent);
 }
-header.header-hidden {
-    transform: translateY(calc(-100% - 40px)); /* the extra 40px hides the glow too */
+header a:hover {
+    color: var(--white) !important;
 }
-header:focus-within {
-    transform: none; /* if someone tabs into the menu, show it */
-}
-@media (prefers-reduced-motion: reduce) {
-    header {
-        transition: none;
-    }
+header svg {
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--violet) 55%, transparent));
 }
 
 /* Footer: same gradient as the header, mirrored so the intense violet
@@ -209,4 +205,16 @@ footer a:hover {
     clip: rect(1px, 1px, 1px, 1px);
     clip-path: inset(50%);
     white-space: nowrap;
+}
+
+#posts {
+    scroll-margin-top: 40px;
+}
+
+::selection {
+    background: var(--violet-accent);
+    color: var(--white);
+}
+html {
+    scrollbar-color: var(--violet-accent) var(--violet-background);
 }

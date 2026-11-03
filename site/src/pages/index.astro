@@ -17,6 +17,11 @@ const posts = (await getCollection('blog')).sort(
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<script is:inline>
+			if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+				document.documentElement.classList.add('reveal-on');
+			}
+		</script>
 		<style>
 			:global(html) {
 				scroll-behavior: smooth;
@@ -179,7 +184,9 @@ const posts = (await getCollection('blog')).sort(
 				color: var(--violet-light);
 			}
 			ul a:hover img {
-				box-shadow: var(--box-shadow);
+				box-shadow: 
+					0 0 20px color-mix(in srgb, var(--violet) 90%, transparent),
+					0 0 60px color-mix(in srgb, var(--violet-accent) 70%, transparent);
 			}
 			@media (max-width: 720px) {
 				ul {
@@ -208,6 +215,19 @@ const posts = (await getCollection('blog')).sort(
 				.hero-content h1::after {
 					animation: none;
 				}
+			}
+
+			.post-card {
+				transition:
+					opacity 1.0s ease,
+					transform 1.0s ease;
+			}
+			.post-card:nth-child(even) {
+				transition-delay: 0.1s;
+			}
+			:global(html.reveal-on) .post-card:not(.is-visible) {
+				opacity: 0;
+				transform: translateY(50px);
 			}
 		</style>
 	</head>
@@ -244,7 +264,7 @@ const posts = (await getCollection('blog')).sort(
 			<section>
 				<ul>
 					{posts.map((post) => (
-						<li>
+						<li class="post-card">
 							<a href={`/blog/${post.id}/`}>
 								{post.data.heroImage && (
 									<Image width={720} height={360} src={post.data.heroImage} alt="" />
@@ -261,5 +281,26 @@ const posts = (await getCollection('blog')).sort(
 		</main>
 
 		<Footer />
+	
+		<script>
+			const cards = document.querySelectorAll('.post-card');
+
+			if ('IntersectionObserver' in window) {
+				const observer = new IntersectionObserver(
+					(entries) => {
+						entries.forEach((entry) => {
+							if (entry.isIntersecting) {
+								entry.target.classList.add('is-visible');
+								observer.unobserve(entry.target);
+							}
+						});
+					},
+					{ threshold: 0.15 },
+				);
+				cards.forEach((card) => observer.observe(card));
+			} else {
+				cards.forEach((card) => card.classList.add('is-visible'));
+			}
+		</script>
 	</body>
 </html>

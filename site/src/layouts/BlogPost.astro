@@ -52,10 +52,25 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.last-updated-on {
 				font-style: italic;
 			}
+
+			.reading-progress {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 3px;
+				z-index: 20; /* above the sticky header (z-index 10) */
+				transform: scaleX(0);
+				transform-origin: left;
+				background: linear-gradient(to right, var(--violet-accent), var(--violet-light));
+				box-shadow: 0 0 10px color-mix(in srgb, var(--violet) 70%, transparent);
+				will-change: transform;
+			}
 		</style>
 	</head>
 
 	<body>
+		<div class="reading-progress" aria-hidden="true"></div>
 		<Header />
 		<main>
 			<article>
@@ -80,5 +95,41 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			</article>
 		</main>
 		<Footer />
+
+		<script>
+			const bar = document.querySelector<HTMLElement>('.reading-progress');
+			const article = document.querySelector('article');
+			let ticking = false;
+
+			function update() {
+				if (!bar) return;
+				let progress = 0;
+
+				if (article) {
+					// from the top of the article reaching the top of the screen
+					// to its bottom reaching the bottom of the screen
+					const rect = article.getBoundingClientRect();
+					const total = rect.height - window.innerHeight;
+					progress = total > 0 ? -rect.top / total : rect.top < 0 ? 1 : 0;
+				} else {
+					const total = document.documentElement.scrollHeight - window.innerHeight;
+					progress = total > 0 ? window.scrollY / total : 0;
+				}
+
+				bar.style.transform = `scaleX(${Math.min(Math.max(progress, 0), 1)})`;
+				ticking = false;
+			}
+
+			function onScroll() {
+				if (!ticking) {
+					ticking = true;
+					requestAnimationFrame(update);
+				}
+			}
+
+			window.addEventListener('scroll', onScroll, { passive: true });
+			window.addEventListener('resize', onScroll);
+			update();
+		</script>
 	</body>
 </html>
