@@ -3,6 +3,7 @@ title: 'An aircraft radar on an ESP32 and a 2.4" display'
 description: 'Turning two unused parts into a small live radar that shows the planes flying around me.'
 pubDate: 'Nov 02 2026'
 heroImage: '../../assets/blog-placeholder-2.jpg'
+tags: ['ESP32', 'C++', 'PlatformIO', 'IoT']
 ---
 
 I had an ESP32 board and a 2.4-inch TFT display lying around at home, unused. I like planes, and at some point the idea clicked: why not combine both into a small desk device that shows the aircraft flying around me, like a tiny air traffic radar?

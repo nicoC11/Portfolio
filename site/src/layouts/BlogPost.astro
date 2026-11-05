@@ -8,128 +8,169 @@ import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+// Añadimos 'tags' a las propiedades que extraemos
+const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.props;
 ---
 
 <html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				---box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
+    <head>
+        <BaseHead title={title} description={description} />
+        <style>
+            main {
+                width: calc(100% - 2em);
+                max-width: 100%;
+                margin: 0;
+            }
+            .hero-image {
+                width: 100%;
+            }
+            .hero-image img {
+                display: block;
+                margin: 0 auto;
+                border-radius: 12px;
+                /* box-shadow: var(--box-shadow); */
+            }
+            .prose {
+                width: 720px;
+                max-width: calc(100% - 2em);
+                margin: auto;
+                padding: 1em;
+                color: rgb(var(--gray-dark));
+            }
+            .title {
+                margin-bottom: 1em;
+                padding: 1em 0;
+                text-align: center;
+                line-height: 1;
+            }
+            .title h1 {
+                margin: 0 0 0.5em 0;
+            }
+            .date {
+                margin-bottom: 0.5em;
+                color: rgb(var(--gray));
+            }
+            .last-updated-on {
+                font-style: italic;
+            }
+            
+            /* ---------- Estilos de las Etiquetas (Pills) ---------- */
+            .tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                justify-content: center;
+                margin-top: 1.5rem;
+                margin-bottom: 2rem;
+            }
+            .tag {
+                background-color: rgba(132, 88, 179, 0.15); /* Fondo lila transparente */
+                color: var(--white);
+                font-size: 0.85rem;
+                font-weight: 600;
+                padding: 0.4em 1em;
+                border-radius: 9999px; /* Bordes totalmente curvos (pills) */
+                border: 1px solid var(--violet);
+                box-shadow: 0 0 8px var(--violet); /* Brillo ligero */
+                text-decoration: none;
+                transition: all 0.2s ease;
+                letter-spacing: 0.05em;
+            }
+            /* Efecto hover preparado para cuando sean links filtrables */
+            a.tag:hover {
+                background-color: rgba(132, 88, 179, 0.4);
+                color: var(--color-blanco-roto, #E5EAF5);
+                box-shadow: 0 0 12px rgba(208, 189, 244, 0.6);
+                transform: translateY(-2px);
+            }
 
-			.reading-progress {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 3px;
-				z-index: 20; /* above the sticky header (z-index 10) */
-				transform: scaleX(0);
-				transform-origin: left;
-				background: linear-gradient(to right, var(--violet-accent), var(--violet-light));
-				box-shadow: 0 0 10px color-mix(in srgb, var(--violet) 70%, transparent);
-				will-change: transform;
-			}
-		</style>
-	</head>
+            .reading-progress {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 3px;
+                z-index: 20; 
+                transform: scaleX(0);
+                transform-origin: left;
+                background: linear-gradient(to right, var(--violet-accent), var(--violet-light));
+                box-shadow: 0 0 10px color-mix(in srgb, var(--violet) 70%, transparent);
+                will-change: transform;
+            }
+        </style>
+    </head>
 
-	<body>
-		<div class="reading-progress" aria-hidden="true"></div>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{updatedDate && (
-								<div class="last-updated-on">
-									Last updated on <FormattedDate date={updatedDate} />
-								</div>
-							)}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
+    <body>
+        <div class="reading-progress" aria-hidden="true"></div>
+        <Header />
+        <main>
+            <article>
+                <div class="hero-image">
+                    {heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
+                </div>
+                <div class="prose">
+                    <div class="title">
+                        <div class="date">
+                            <FormattedDate date={pubDate} />
+                            {updatedDate && (
+                                <div class="last-updated-on">
+                                    Last updated on <FormattedDate date={updatedDate} />
+                                </div>
+                            )}
+                        </div>
+                        <h1>{title}</h1>
+                        <hr />
+                        
+                        <!-- Bloque dinámico de etiquetas -->
+                        {tags && tags.length > 0 && (
+                            <div class="tags">
+                                {tags.map((tag) => (
+                                    /* Cambia el <span> por <a> si luego quieres hacer click para filtrar */
+                                    <span class="tag">{tag}</span>
+                                ))}
+                            </div>
+                        )}
+                        
+                    </div>
+                    <slot />
+                </div>
+            </article>
+        </main>
+        <Footer />
 
-		<script>
-			const bar = document.querySelector<HTMLElement>('.reading-progress');
-			const article = document.querySelector('article');
-			let ticking = false;
+        <script>
+            // (Tu script de reading progress original se mantiene intacto aquí)
+            const bar = document.querySelector<HTMLElement>('.reading-progress');
+            const article = document.querySelector('article');
+            let ticking = false;
 
-			function update() {
-				if (!bar) return;
-				let progress = 0;
+            function update() {
+                if (!bar) return;
+                let progress = 0;
 
-				if (article) {
-					// from the top of the article reaching the top of the screen
-					// to its bottom reaching the bottom of the screen
-					const rect = article.getBoundingClientRect();
-					const total = rect.height - window.innerHeight;
-					progress = total > 0 ? -rect.top / total : rect.top < 0 ? 1 : 0;
-				} else {
-					const total = document.documentElement.scrollHeight - window.innerHeight;
-					progress = total > 0 ? window.scrollY / total : 0;
-				}
+                if (article) {
+                    const rect = article.getBoundingClientRect();
+                    const total = rect.height - window.innerHeight;
+                    progress = total > 0 ? -rect.top / total : rect.top < 0 ? 1 : 0;
+                } else {
+                    const total = document.documentElement.scrollHeight - window.innerHeight;
+                    progress = total > 0 ? window.scrollY / total : 0;
+                }
 
-				bar.style.transform = `scaleX(${Math.min(Math.max(progress, 0), 1)})`;
-				ticking = false;
-			}
+                bar.style.transform = `scaleX(${Math.min(Math.max(progress, 0), 1)})`;
+                ticking = false;
+            }
 
-			function onScroll() {
-				if (!ticking) {
-					ticking = true;
-					requestAnimationFrame(update);
-				}
-			}
+            function onScroll() {
+                if (!ticking) {
+                    ticking = true;
+                    requestAnimationFrame(update);
+                }
+            }
 
-			window.addEventListener('scroll', onScroll, { passive: true });
-			window.addEventListener('resize', onScroll);
-			update();
-		</script>
-	</body>
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('resize', onScroll);
+            update();
+        </script>
+    </body>
 </html>

@@ -9,298 +9,343 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import heroImage from '../assets/hero.png';
 
 const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<script is:inline>
-			if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-				document.documentElement.classList.add('reveal-on');
-			}
-		</script>
-		<style>
-			:global(html) {
-				scroll-behavior: smooth;
-			}
+    <head>
+        <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+        <script is:inline>
+            if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.documentElement.classList.add('reveal-on');
+            }
+        </script>
+        <style>
+            :global(html) {
+                scroll-behavior: smooth;
+            }
 
-			/* ---------- Hero ---------- */
-			.hero {
-				position: relative;
-				height: 85svh;
-				min-height: 480px;
-				display: grid;
-				place-items: center;
-				text-align: center;
-				overflow: hidden;
-			}
-			.hero :global(.hero-img) {
-				position: absolute;
-				inset: 0;
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-				border-radius: 0;
-			}
-			.hero-overlay {
-				position: absolute;
-				inset: 0;
-				background: linear-gradient(
-					to bottom,
-					color-mix(in srgb, var(--violet-background) 55%, transparent),
-					var(--violet-background)
-				);
-			}
-			.hero-content {
-				position: relative;
-				max-width: 720px;
-				padding: 0 1.5rem;
-				text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
-				animation: fade-up 1s ease both;
-			}
-			
-			/* Violet glow on the title */
-			.hero-content h1 {
-				text-shadow:
-					0 0 6px color-mix(in srgb, var(--violet) 45%, transparent),
-					0 0 20px color-mix(in srgb, var(--violet-accent) 55%, transparent);
-			}
+            /* ---------- Hero ---------- */
+            .hero {
+                position: relative;
+                height: 85svh;
+                min-height: 480px;
+                display: grid;
+                place-items: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .hero :global(.hero-img) {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 0;
+            }
+            .hero-overlay {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    to bottom,
+                    color-mix(in srgb, var(--violet-background) 55%, transparent),
+                    var(--violet-background)
+                );
+            }
+            .hero-content {
+                position: relative;
+                max-width: 720px;
+                padding: 0 1.5rem;
+                text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+                animation: fade-up 1s ease both;
+            }
+            
+            /* Violet glow on the title */
+            .hero-content h1 {
+                text-shadow:
+                    0 0 6px color-mix(in srgb, var(--violet) 45%, transparent),
+                    0 0 20px color-mix(in srgb, var(--violet-accent) 55%, transparent);
+            }
 
-			/* Blinking cursor after the title */
-			.hero-content h1::after {
-				content: '';
-				display: inline-block;
-				width: 0.08em;
-				height: 0.8em;
-				margin-left: 0.12em;
-				vertical-align: -0.01em;
-				background: var(--violet-light);
-				box-shadow: 0 0 6px color-mix(in srgb, var(--violet) 60%, transparent),
-							0 0 20px color-mix(in srgb, var(--violet-accent) 70%, transparent);
-				animation: blink 1s step-end infinite;
-			}
-			@keyframes blink {
-				50% {
-					opacity: 0;
-				}
-			}
+            /* Blinking cursor after the title */
+            .hero-content h1::after {
+                content: '';
+                display: inline-block;
+                width: 0.08em;
+                height: 0.8em;
+                margin-left: 0.12em;
+                vertical-align: -0.01em;
+                background: var(--violet-light);
+                box-shadow: 0 0 6px color-mix(in srgb, var(--violet) 60%, transparent),
+                            0 0 20px color-mix(in srgb, var(--violet-accent) 70%, transparent);
+                animation: blink 1s step-end infinite;
+            }
+            @keyframes blink {
+                50% {
+                    opacity: 0;
+                }
+            }
 
-			.scroll-down {
-				position: absolute;
-				bottom: 2rem;
-				left: 50%;
-				transform: translateX(-50%);
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				gap: 0.6rem;
-				color: var(--violet-text);
-				text-decoration: none;
-				font-size: 0.85rem;
-				letter-spacing: 0.15em;
-				text-transform: uppercase;
-			}
-			.chevron {
-				width: 14px;
-				height: 14px;
-				border-right: 2px solid currentColor;
-				border-bottom: 2px solid currentColor;
-				transform: rotate(45deg);
-				animation: bounce 1.6s ease-in-out infinite;
-			}
-			@keyframes bounce {
-				0%,
-				100% {
-					transform: translateY(0) rotate(45deg);
-					opacity: 0.4;
-				}
-				50% {
-					transform: translateY(8px) rotate(45deg);
-					opacity: 1;
-				}
-			}
-			@keyframes fade-up {
-				from {
-					opacity: 0;
-					transform: translateY(16px);
-				}
-				to {
-					opacity: 1;
-					transform: none;
-				}
-			}
+            .scroll-down {
+                position: absolute;
+                bottom: 2rem;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.6rem;
+                color: var(--violet-text);
+                text-decoration: none;
+                font-size: 0.85rem;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+            }
+            .chevron {
+                width: 14px;
+                height: 14px;
+                border-right: 2px solid currentColor;
+                border-bottom: 2px solid currentColor;
+                transform: rotate(45deg);
+                animation: bounce 1.6s ease-in-out infinite;
+            }
+            @keyframes bounce {
+                0%,
+                100% {
+                    transform: translateY(0) rotate(45deg);
+                    opacity: 0.4;
+                }
+                50% {
+                    transform: translateY(8px) rotate(45deg);
+                    opacity: 1;
+                }
+            }
+            @keyframes fade-up {
+                from {
+                    opacity: 0;
+                    transform: translateY(16px);
+                }
+                to {
+                    opacity: 1;
+                    transform: none;
+                }
+            }
 
-			/* ---------- Posts ---------- */
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: var(--black);
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: var(--gray);
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: var(--violet-light);
-			}
-			ul a:hover img {
-				box-shadow: 
-					0 0 20px color-mix(in srgb, var(--violet) 90%, transparent),
-					0 0 60px color-mix(in srgb, var(--violet-accent) 70%, transparent);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
+            /* ---------- Posts ---------- */
+            main {
+                width: 960px;
+            }
+            ul {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 2rem;
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            ul li {
+                width: calc(50% - 1rem);
+            }
+            ul li * {
+                text-decoration: none;
+                transition: 0.2s ease;
+            }
+            ul li:first-child {
+                width: 100%;
+                margin-bottom: 1rem;
+                text-align: center;
+            }
+            ul li:first-child img {
+                width: 100%;
+            }
+            ul li:first-child .title {
+                font-size: 2.369rem;
+            }
+            ul li img {
+                margin-bottom: 0.5rem;
+                border-radius: 12px;
+            }
+            ul li a {
+                display: block;
+            }
+            .title {
+                margin: 0;
+                color: var(--black);
+                line-height: 1;
+            }
+            .date {
+                margin: 0;
+                color: var(--gray);
+            }
+            ul li a:hover h4,
+            ul li a:hover .date {
+                color: var(--violet-light);
+            }
+            ul a:hover img {
+                box-shadow: 
+                    0 0 20px color-mix(in srgb, var(--violet) 90%, transparent),
+                    0 0 60px color-mix(in srgb, var(--violet-accent) 70%, transparent);
+            }
+            @media (max-width: 720px) {
+                ul {
+                    gap: 0.5em;
+                }
+                ul li {
+                    width: 100%;
+                    text-align: center;
+                }
+                ul li:first-child {
+                    margin-bottom: 0;
+                }
+                ul li:first-child .title {
+                    font-size: 1.563em;
+                }
+            }
 
-			@media (prefers-reduced-motion: reduce) {
-				:global(html) {
-					scroll-behavior: auto;
-				}
-				.hero-content,
-				.chevron {
-					animation: none;
-				}
-				.hero-content h1::after {
-					animation: none;
-				}
-			}
+            @media (prefers-reduced-motion: reduce) {
+                :global(html) {
+                    scroll-behavior: auto;
+                }
+                .hero-content,
+                .chevron {
+                    animation: none;
+                }
+                .hero-content h1::after {
+                    animation: none;
+                }
+            }
 
-			.post-card {
-				transition:
-					opacity 1.0s ease,
-					transform 1.0s ease;
-			}
-			.post-card:nth-child(even) {
-				transition-delay: 0.1s;
-			}
-			:global(html.reveal-on) .post-card:not(.is-visible) {
-				opacity: 0;
-				transform: translateY(50px);
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
+            .post-card {
+                transition:
+                    opacity 1.0s ease,
+                    transform 1.0s ease;
+            }
+            .post-card:nth-child(even) {
+                transition-delay: 0.1s;
+            }
+            :global(html.reveal-on) .post-card:not(.is-visible) {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+        </style>
+    </head>
+    <body>
+        <Header />
 
-		<section class="hero">
-			<Image
-				class="hero-img"
-				src={heroImage}
-				alt=""
-				widths={[800, 1400, 2000]}
-				sizes="100vw"
-				loading="eager"
-			/>
-			<div class="hero-overlay"></div>
+        <section class="hero">
+            <Image
+                class="hero-img"
+                src={heroImage}
+                alt=""
+                widths={[800, 1400, 2000]}
+                sizes="100vw"
+                loading="eager"
+            />
+            <div class="hero-overlay"></div>
 
-			<div class="hero-content">
-				<h1>Hi, I'm Nico</h1>
-				<p>
-					Computer engineer working across cloud, systems and robotics. This is where I document
-					the projects I build, starting with this very site on AWS.{' '}
-					<a href="/about">About me →</a>
-				</p>
-			</div>
+            <div class="hero-content">
+                <!-- Se reemplaza el texto fijo por el span dinámico -->
+                <h1><span id="typewriter"></span></h1>
+                <p>
+                    Computer engineer working across cloud, systems and robotics. This is where I document
+                    the projects I build, starting with this very site on AWS.{' '}
+                    <a href="/about">About me →</a>
+                </p>
+            </div>
 
-			<a href="#posts" class="scroll-down" aria-label="Scroll down to the posts">
-				<span>Scroll down</span>
-				<span class="chevron"></span>
-			</a>
-		</section>
+            <a href="#posts" class="scroll-down" aria-label="Scroll down to the posts">
+                <span>Scroll down</span>
+                <span class="chevron"></span>
+            </a>
+        </section>
 
-		<main id="posts">
-			<section>
-				<ul>
-					{posts.map((post) => (
-						<li class="post-card">
-							<a href={`/blog/${post.id}/`}>
-								{post.data.heroImage && (
-									<Image width={720} height={360} src={post.data.heroImage} alt="" />
-								)}
-								<h4 class="title">{post.data.title}</h4>
-								<p class="date">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-							</a>
-						</li>
-					))}
-				</ul>
-			</section>
-		</main>
+        <main id="posts">
+            <section>
+                <ul>
+                    {posts.map((post) => (
+                        <li class="post-card">
+                            <a href={`/blog/${post.id}/`}>
+                                {post.data.heroImage && (
+                                    <Image width={720} height={360} src={post.data.heroImage} alt="" />
+                                )}
+                                <h4 class="title">{post.data.title}</h4>
+                                <p class="date">
+                                    <FormattedDate date={post.data.pubDate} />
+                                </p>
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+        </main>
 
-		<Footer />
-	
-		<script>
-			const cards = document.querySelectorAll('.post-card');
+        <Footer />
+    
+        <script>
+            // --- Script de Intersection Observer (Original) ---
+            const cards = document.querySelectorAll('.post-card');
 
-			if ('IntersectionObserver' in window) {
-				const observer = new IntersectionObserver(
-					(entries) => {
-						entries.forEach((entry) => {
-							if (entry.isIntersecting) {
-								entry.target.classList.add('is-visible');
-								observer.unobserve(entry.target);
-							}
-						});
-					},
-					{ threshold: 0.15 },
-				);
-				cards.forEach((card) => observer.observe(card));
-			} else {
-				cards.forEach((card) => card.classList.add('is-visible'));
-			}
-		</script>
-	</body>
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('is-visible');
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    },
+                    { threshold: 0.15 },
+                );
+                cards.forEach((card) => observer.observe(card));
+            } else {
+                cards.forEach((card) => card.classList.add('is-visible'));
+            }
+
+            // --- Script del Typewriter Effect ---
+            const words = ["Hi, I'm Nico", "Cloud", "DevOps", "Robotics", "Networking", "IoT"];
+            const typingSpeed = 110;
+            const deletingSpeed = 70;
+            const delayFirstWord = 7000; // 7 segundos para la primera
+            const delayOtherWords = 3000; // 3 segundos para el resto
+
+            let wordIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+
+            function typeEffect() {
+                const typewriterElement = document.getElementById('typewriter');
+                if (!typewriterElement) return;
+
+                const currentWord = words[wordIndex];
+
+                if (isDeleting) {
+                    charIndex--;
+                } else {
+                    charIndex++;
+                }
+                
+                typewriterElement.textContent = currentWord.substring(0, charIndex);
+
+                let setTimeoutSpeed = isDeleting ? deletingSpeed : typingSpeed;
+
+                if (!isDeleting && charIndex === currentWord.length) {
+                    // Determinar pausa según si es la primera palabra o no
+                    setTimeoutSpeed = (wordIndex === 0) ? delayFirstWord : delayOtherWords;
+                    isDeleting = true;
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    wordIndex = (wordIndex + 1) % words.length;
+                    setTimeoutSpeed = 500; // Pausa en blanco antes de volver a escribir
+                }
+
+                setTimeout(typeEffect, setTimeoutSpeed);
+            }
+
+            // Iniciar animación
+            document.addEventListener('DOMContentLoaded', typeEffect);
+        </script>
+    </body>
 </html>

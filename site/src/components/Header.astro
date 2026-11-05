@@ -31,7 +31,96 @@ import HeaderLink from './HeaderLink.astro';
 			    ></path></svg
 		    >
 	    </a>
+	    <!-- Botón Toggle (Añadir en el HTML del Header) -->
+		<button id="trail-toggle" class="trail-toggle" aria-label="Toggle light effect">
+			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.287 1.288L3 12l5.8 1.9a2 2 0 0 1 1.288 1.287L12 21l1.9-5.8a2 2 0 0 1 1.287-1.288L21 12l-5.8-1.9a2 2 0 0 1-1.288-1.287Z"/></svg>
+			<!-- Elemento para el mensaje emergente -->
+			<span id="trail-tooltip" class="trail-tooltip">Light effect on</span>
+		</button>
+
+		<!-- Estilos (Añadir en la etiqueta <style> del Header) -->
+		<style>
+			.trail-toggle {
+				position: relative; /* Necesario para que el tooltip se posicione respecto al botón */
+				background: none;
+				border: none;
+				cursor: pointer;
+				color: var(--color-celeste, #A0D2EB);
+				padding: 8px;
+				transition: all 0.3s ease;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			.trail-toggle:hover {
+				color: var(--color-violeta, #8458B3);
+			}
+			
+			.trail-toggle.is-disabled {
+				color: var(--color-gris-oscuro, #494D5F);
+			}
+
+			/* Diseño del Tooltip */
+			.trail-tooltip {
+				position: absolute;
+				top: 130%; /* Lo empuja justo debajo del botón */
+				right: 0; /* Lo alinea a la derecha para que no se salga de la pantalla */
+				background-color: rgba(36, 38, 48, 0.95); /* Fondo muy oscuro basado en tu paleta */
+				color: var(--color-blanco-roto, #E5EAF5);
+				border: 1px solid var(--color-gris-oscuro, #494D5F);
+				padding: 6px 10px;
+				border-radius: 6px;
+				font-size: 0.75rem;
+				font-family: var(--font-atkinson);
+				white-space: nowrap;
+				pointer-events: none;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+				
+				/* Animación de entrada */
+				opacity: 0;
+				transform: translateY(-8px);
+				transition: opacity 0.2s ease, transform 0.2s ease;
+			}
+
+			/* Mostrar el tooltip al pasar el ratón */
+			.trail-toggle:hover .trail-tooltip {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		</style>
+
+		<!-- Lógica (Añadir en la etiqueta <script> del Header) -->
+		<script>
+			const toggleBtn = document.getElementById('trail-toggle');
+			const tooltipText = document.getElementById('trail-tooltip');
+			
+			if (toggleBtn && tooltipText) {
+				let isEnabled = localStorage.getItem('cursorTrail') !== 'disabled';
+				
+				const updateUI = () => {
+					if (isEnabled) {
+						toggleBtn.classList.remove('is-disabled');
+						tooltipText.textContent = 'Light effect: ON';
+					} else {
+						toggleBtn.classList.add('is-disabled');
+						tooltipText.textContent = 'Light effect: OFF';
+					}
+				};
+				
+				updateUI();
+
+				toggleBtn.addEventListener('click', () => {
+					isEnabled = !isEnabled;
+					localStorage.setItem('cursorTrail', isEnabled ? 'enabled' : 'disabled');
+					updateUI();
+					
+					window.dispatchEvent(new CustomEvent('trailToggled', { detail: { isEnabled } }));
+				});
+			}
+		</script>
     </div>
+	
 	</nav>
 </header>
 <style>
