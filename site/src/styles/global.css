@@ -27,6 +27,26 @@
     --gray-gradient: color-mix(in srgb, var(--violet-dark) 50%, transparent), var(--violet-background);
     
 }
+
+:root[data-theme="light"] {
+    color-scheme: light;
+
+    /* Invertimos los colores principales */
+    --violet-background: #f8f8f8; /* Fondo principal blanco */
+    --violet-text: #161616; /* El texto principal pasa a ser tu antiguo fondo (casi negro) */
+    
+    /* Ajustamos los tonos medios para legibilidad en fondo claro */
+    --violet-light: #0949f9; /* Los títulos (antes claros) pasan a violeta muy oscuro */
+    --violet: #0949f9; /* Links y texto secundario usan el acento vibrante */
+    --violet-dark: #330075; /* Fondos suaves de código e inputs pasan al tono "violet-text" clarito */
+    
+    /* El blanco original (usado para bordes/brillos) se invierte a oscuro */
+    --white: #bed8ff; 
+    
+    /* Los acentos fuertes (bars, botones activos) se pueden mantener igual 
+       porque el #6F00FF contrasta perfectamente sobre blanco */
+}
+
 body {
     font-family: var(--font-atkinson);
     margin: 0;
@@ -169,11 +189,9 @@ header svg {
 footer {
     background: linear-gradient(
         to bottom,
-        var(--violet-accent),
-        color-mix(in srgb, var(--violet-accent) 5%, var(--violet-background))
+        var(--violet-background),
+        color-mix(in srgb, var(--violet-background) 5%, var(--violet-accent))
     ) !important;
-    border-top: 1px solid color-mix(in srgb, var(--white) 50%, transparent);
-    box-shadow: 0 -6px 24px var(--violet-accent) !important;
     color: var(--violet-text) !important;
 }
 footer a {
@@ -181,6 +199,24 @@ footer a {
 }
 footer a:hover {
     color: var(--white) !important;
+}
+
+/* Footer en Light Mode: Degradado y resplandor azul/celeste */
+:root[data-theme="light"] footer {
+    background: linear-gradient(
+        to bottom,
+        #f8f8f8, /* Azul/celeste en la parte superior */
+        color-mix(in srgb, #0949f9 85%, var(--violet-background))
+    ) !important;
+    color: var(--color-gris-oscuro, #0949f9) !important;
+}
+
+:root[data-theme="light"] footer a {
+    color: var(--color-gris-oscuro, #0949f9) !important;
+}
+
+:root[data-theme="light"] footer a:hover {
+    color: var(--color-violeta, #6089FB) !important; /* Al pasar el ratón cambia al violeta de tu marca */
 }
 
 

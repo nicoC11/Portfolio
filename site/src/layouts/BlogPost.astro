@@ -15,6 +15,15 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.prop
 <html lang="en">
     <head>
         <BaseHead title={title} description={description} />
+        
+        <script is:inline>
+            // Se ejecuta al instante antes de que el navegador dibuje nada
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        </script>
+
         <style>
             main {
                 width: calc(100% - 2em);

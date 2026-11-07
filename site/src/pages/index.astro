@@ -7,6 +7,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import heroImage from '../assets/hero.png';
+import heroImageLight from '../assets/hero-light.png';
 
 const posts = (await getCollection('blog')).sort(
     (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -45,12 +46,26 @@ const posts = (await getCollection('blog')).sort(
                 object-fit: cover;
                 border-radius: 0;
             }
+
+            /* Ocultar la imagen clara por defecto */
+            .hero :global(.hero-light-img) {
+                display: none;
+            }
+
+            /* Cuando el modo claro esté activo, ocultar la oscura y mostrar la clara */
+            :global([data-theme="light"]) .hero :global(.hero-dark-img) {
+                display: none;
+            }
+            :global([data-theme="light"]) .hero :global(.hero-light-img) {
+                display: block;
+            }
+
             .hero-overlay {
                 position: absolute;
                 inset: 0;
                 background: linear-gradient(
                     to bottom,
-                    color-mix(in srgb, var(--violet-background) 55%, transparent),
+                    color-mix(in srgb, var(--violet-background) 25%, transparent),
                     var(--violet-background)
                 );
             }
@@ -229,6 +244,15 @@ const posts = (await getCollection('blog')).sort(
                 opacity: 0;
                 transform: translateY(50px);
             }
+
+            /* Quitar el resplandor del Hero en modo claro */
+            :global([data-theme="light"]) .hero-content h1 {
+                text-shadow: none;
+            }
+            :global([data-theme="light"]) .hero-content h1::after {
+                box-shadow: none;
+            }
+
         </style>
     </head>
     <body>
@@ -243,6 +267,16 @@ const posts = (await getCollection('blog')).sort(
                 sizes="100vw"
                 loading="eager"
             />
+            <!-- Imagen modo claro -->
+            <Image
+                class="hero-img hero-light-img"
+                src={heroImageLight}
+                alt=""
+                widths={[800, 1400, 2000]}
+                sizes="100vw"
+                loading="eager"
+            />
+
             <div class="hero-overlay"></div>
 
             <div class="hero-content">

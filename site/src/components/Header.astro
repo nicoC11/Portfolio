@@ -31,12 +31,14 @@ import HeaderLink from './HeaderLink.astro';
 			    ></path></svg
 		    >
 	    </a>
-	    <!-- Botón Toggle (Añadir en el HTML del Header) -->
-		<button id="trail-toggle" class="trail-toggle" aria-label="Toggle light effect">
-			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.287 1.288L3 12l5.8 1.9a2 2 0 0 1 1.288 1.287L12 21l1.9-5.8a2 2 0 0 1 1.287-1.288L21 12l-5.8-1.9a2 2 0 0 1-1.288-1.287Z"/></svg>
-			<!-- Elemento para el mensaje emergente -->
-			<span id="trail-tooltip" class="trail-tooltip">Light effect on</span>
-		</button>
+	    <div class="header-toggles">
+            <!-- Botón del Tema -->
+            <button id="theme-toggle" class="trail-toggle" aria-label="Toggle theme">
+                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                <span class="trail-tooltip">Switch theme</span>
+            </button>
+        </div>
 
 		<!-- Estilos (Añadir en la etiqueta <style> del Header) -->
 		<style>
@@ -90,35 +92,19 @@ import HeaderLink from './HeaderLink.astro';
 			}
 		</style>
 
-		<!-- Lógica (Añadir en la etiqueta <script> del Header) -->
 		<script>
-			const toggleBtn = document.getElementById('trail-toggle');
-			const tooltipText = document.getElementById('trail-tooltip');
-			
-			if (toggleBtn && tooltipText) {
-				let isEnabled = localStorage.getItem('cursorTrail') !== 'disabled';
-				
-				const updateUI = () => {
-					if (isEnabled) {
-						toggleBtn.classList.remove('is-disabled');
-						tooltipText.textContent = 'Light effect: ON';
-					} else {
-						toggleBtn.classList.add('is-disabled');
-						tooltipText.textContent = 'Light effect: OFF';
-					}
-				};
-				
-				updateUI();
-
-				toggleBtn.addEventListener('click', () => {
-					isEnabled = !isEnabled;
-					localStorage.setItem('cursorTrail', isEnabled ? 'enabled' : 'disabled');
-					updateUI();
-					
-					window.dispatchEvent(new CustomEvent('trailToggled', { detail: { isEnabled } }));
-				});
-			}
-		</script>
+            // Lógica exclusiva del cambio de tema
+            const themeBtn = document.getElementById('theme-toggle');
+            if (themeBtn) {
+                themeBtn.addEventListener('click', () => {
+                    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                    const newTheme = isLight ? 'dark' : 'light';
+                    
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                });
+            }
+        </script>
     </div>
 	
 	</nav>
@@ -163,4 +149,43 @@ import HeaderLink from './HeaderLink.astro';
 			display: none;
 		}
 	}
+	.header-toggles {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	/* Ocultar la luna por defecto, y mostrarla solo cuando esté en modo claro */
+	.moon-icon { display: none; }
+	:global([data-theme="light"]) .moon-icon { display: block; }
+	:global([data-theme="light"]) .sun-icon { display: none; }
+
+	/* Quitar el resplandor/borde del Header en modo claro */
+	:global([data-theme="light"]) header {
+		box-shadow: none;
+		background: transparent;
+		/* Si el glow del header está hecho con border-bottom o algún pseudo-elemento, puedes anularlo aquí también */
+	}
+
+	/* Eliminar el resplandor del título y los botones del menú en modo claro */
+    :global([data-theme="light"]) nav a,
+    :global([data-theme="light"]) h2 a {
+        text-shadow: none !important;
+        filter: none !important; /* Por si el glow está hecho con drop-shadow */
+    }
+
+    /* Si el indicador de la página actual (la línea de abajo) también brilla, lo apagamos */
+    :global([data-theme="light"]) nav a.active {
+        box-shadow: none !important;
+    }
+
+	/* Eliminar el resplandor de los iconos sociales y los botones a la derecha en modo claro */
+    :global([data-theme="light"]) .social-links a,
+    :global([data-theme="light"]) .social-links svg,
+    :global([data-theme="light"]) .header-toggles button,
+    :global([data-theme="light"]) .header-toggles svg {
+        filter: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
 </style>
